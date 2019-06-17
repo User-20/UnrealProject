@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\..\MultiRPG.uproject" />
+    <Filter Include="Source">
+      <UniqueIdentifier>{B6EDCB04-A3EC-406B-A8D1-D34EEFF1FFC0}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\MultiRPG.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\Source\MultiRPGEditor.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <Filter Include="Config">
+      <UniqueIdentifier>{5D323464-1BF2-4D1F-A39C-EE41ACA774EE}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Config\DefaultEditor.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEditorPerProjectUserSettings.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEngine.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultGame.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultInput.ini">
+      <Filter>Config</Filter>
+    </None>
+    <Filter Include="Source\MultiRPG">
+      <UniqueIdentifier>{31FD8D65-545E-4FA0-9CD4-3DABB4FF15DF}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\MultiRPG\MultiRPG.Build.cs">
+      <Filter>Source\MultiRPG</Filter>
+    </None>
+    <Filter Include="Source\MultiRPG\Private">
+      <UniqueIdentifier>{00F98CEE-C33C-406A-AA36-FAE3329ADEAF}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\MultiRPG\Private\MultiRPG.cpp">
+      <Filter>Source\MultiRPG\Private</Filter>
+    </ClCompile>
+    <Filter Include="Source\MultiRPG\Private\Online">
+      <UniqueIdentifier>{D9E1FD35-138A-4A4B-A91E-4F31274B4DD3}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\MultiRPG\Private\Online\MultiRPGGameMode.cpp">
+      <Filter>Source\MultiRPG\Private\Online</Filter>
+    </ClCompile>
+    <Filter Include="Source\MultiRPG\Private\Player">
+      <UniqueIdentifier>{195331CA-B490-4026-B371-76CD4D235196}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\MultiRPG\Private\Player\MultiRPGCharacter.cpp">
+      <Filter>Source\MultiRPG\Private\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\MultiRPG\Private\Player\MultiRPGPlayerController.cpp">
+      <Filter>Source\MultiRPG\Private\Player</Filter>
+    </ClCompile>
+    <Filter Include="Source\MultiRPG\Private\UI">
+      <UniqueIdentifier>{DAA172A7-5E94-431D-8896-3C339C4EDBA6}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\MultiRPG\Private\UI\ChatWindow.cpp">
+      <Filter>Source\MultiRPG\Private\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\MultiRPG\Private\UI\MultiRPGWidgetBase.cpp">
+      <Filter>Source\MultiRPG\Private\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\MultiRPG\Private\UI\WidgetManager.cpp">
+      <Filter>Source\MultiRPG\Private\UI</Filter>
+    </ClCompile>
+    <Filter Include="Source\MultiRPG\Public">
+      <UniqueIdentifier>{0AEBFAD6-F078-477A-82B3-60137158F999}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\MultiRPG\Public\MultiRPG.h">
+      <Filter>Source\MultiRPG\Public</Filter>
+    </ClInclude>
+    <Filter Include="Source\MultiRPG\Public\Online">
+      <UniqueIdentifier>{F6FBF3C2-C4F7-4060-BE45-B183501F039C}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\MultiRPG\Public\Online\MultiRPGGameMode.h">
+      <Filter>Source\MultiRPG\Public\Online</Filter>
+    </ClInclude>
+    <Filter Include="Source\MultiRPG\Public\Player">
+      <UniqueIdentifier>{39A65A75-DD2A-43F7-920D-524FBD650C31}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\MultiRPG\Public\Player\MultiRPGCharacter.h">
+      <Filter>Source\MultiRPG\Public\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\MultiRPG\Public\Player\MultiRPGPlayerController.h">
+      <Filter>Source\MultiRPG\Public\Player</Filter>
+    </ClInclude>
+    <Filter Include="Source\MultiRPG\Public\UI">
+      <UniqueIdentifier>{4B1822EC-9B86-492B-B8C1-2B7175F8A105}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\MultiRPG\Public\UI\ChatWindow.h">
+      <Filter>Source\MultiRPG\Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\MultiRPG\Public\UI\MultiRPGWidgetBase.h">
+      <Filter>Source\MultiRPG\Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\MultiRPG\Public\UI\WidgetManager.h">
+      <Filter>Source\MultiRPG\Public\UI</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Source\MultiRPG\Public\MultiRPGGameInstance.h">
+      <Filter>Source\MultiRPG\Public</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\MultiRPG\Private\MultiRPGGameInstance.cpp">
+      <Filter>Source\MultiRPG\Private</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
