@@ -44,5 +44,7 @@ public:
 	/* 채팅 기록을 추가 한다 */
 	void AddChatLine(const FText& ChatString);
 
+	/* TextBox에 키보드 포커스 설정 */
+	void ToggleTextBoxKeyboardFocus();
 	
 };

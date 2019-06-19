@@ -46,6 +46,16 @@ void AWidgetManager::AddChatLine(const FText& ChatString)
 	}
 }
 
+void AWidgetManager::ToggleChatWindow()
+{
+	TryCreateChatWidget();
+
+	if (ChatWindow)
+	{
+		ChatWindow->ToggleTextBoxKeyboardFocus();
+	}
+}
+
 bool AWidgetManager::TryCreateChatWidget()
 {
 	bool bIsCreated = false;

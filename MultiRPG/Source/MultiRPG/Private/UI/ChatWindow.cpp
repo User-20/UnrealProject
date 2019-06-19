@@ -6,6 +6,7 @@
 #include "Components/ScrollBox.h"
 #include "Runtime/UMG/Public/Components/TextBlock.h"
 #include "Runtime/Slate/Public/Framework/Application/SlateApplication.h"
+#include "..\..\Public\UI\ChatWindow.h"
 
 UChatWindow::UChatWindow(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
@@ -45,10 +46,12 @@ void UChatWindow::OnChatTextCommitted(const FText & InText, ETextCommit::Type In
 {
 	if (InCommitInfo == ETextCommit::OnEnter)
 	{
-		if (GetPlayerController() != nullptr && !InText.IsEmpty())
+		AMultiRPGPlayerController* PlayerController = Cast<AMultiRPGPlayerController>(GetPlayerController());
+
+		if (PlayerController != nullptr && !InText.IsEmpty())
 		{
 			// 서버로 메세지를 보낸다
-			GetPlayerController()->SendText(InText.ToString());
+			PlayerController->SendText(InText.ToString());
 
 			if (ChatEntry)
 			{
@@ -57,6 +60,10 @@ void UChatWindow::OnChatTextCommitted(const FText & InText, ETextCommit::Type In
 				ChatEntry->SetText(FText());
 			}
 		}
+
+		// 포커스를 UI에서 게임전용으로 변경 한다
+		FInputModeGameOnly InputMode;
+		PlayerController->SetInputMode(InputMode);
 	}
 }
 
@@ -76,6 +83,14 @@ void UChatWindow::AddChatLine(const FText& ChatString)
 			// 스크롤을 마지막으로 내린다
 			ChatHistory->ScrollToEnd();
 		}
+	}
+}
 
+void UChatWindow::ToggleTextBoxKeyboardFocus()
+{
+	if (!ChatEntry->HasKeyboardFocus())
+	{
+		ChatEntry->SetKeyboardFocus();
+		UE_LOG(LogClass, Log, TEXT("@@@@@ SetKeyboardFocus"));
 	}
 }

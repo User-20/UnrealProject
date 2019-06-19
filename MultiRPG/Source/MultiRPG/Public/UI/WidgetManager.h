@@ -44,6 +44,9 @@ public:
 	 */
 	void AddChatLine(const FText& ChatString);
 
+	/* ChatWindow TextBox에 키보드 포커스 설정 */
+	void ToggleChatWindow();
+
 protected:
 	class UChatWindow* ChatWindow;
 };

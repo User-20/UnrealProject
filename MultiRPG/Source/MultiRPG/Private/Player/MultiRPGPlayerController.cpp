@@ -18,6 +18,12 @@ void AMultiRPGPlayerController::BeginPlay()
 	OnChatWindow();
 }
 
+void AMultiRPGPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+	InputComponent->BindAction("ToggleChat", IE_Pressed, this, &AMultiRPGPlayerController::ToggleChatWindow);
+}
+
 void AMultiRPGPlayerController::SendText(const FString & Msg)
 {
 	ServerRPCSendText(Msg);
@@ -56,5 +62,14 @@ void AMultiRPGPlayerController::OnChatWindow()
 	if (WidgetManager)
 	{
 		WidgetManager->ShowChatWindow();
+	}
+}
+
+void AMultiRPGPlayerController::ToggleChatWindow()
+{
+	AWidgetManager* WidgetManager = GetWidgetManager();
+	if (WidgetManager)
+	{
+		WidgetManager->ToggleChatWindow();
 	}
 }

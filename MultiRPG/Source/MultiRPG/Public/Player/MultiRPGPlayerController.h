@@ -17,6 +17,9 @@ public:
 	AMultiRPGPlayerController(const FObjectInitializer& ObjectInitializer);
 	virtual void BeginPlay() override;
 
+protected:
+	void SetupInputComponent() override;
+
 public:
 
 	/* 서버로 채팅 메세지를 보낸다
@@ -37,6 +40,9 @@ public:
 
 	/* 채팅 윈도우를 보여줌 */
 	void OnChatWindow();
+
+	/* 채팅창으로 포커스 이동 */
+	void ToggleChatWindow();
 private:
 
 };
