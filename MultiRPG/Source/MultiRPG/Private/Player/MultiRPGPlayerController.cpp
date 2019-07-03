@@ -61,7 +61,7 @@ void AMultiRPGPlayerController::OnChatWindow()
 	AWidgetManager* WidgetManager = GetWidgetManager();
 	if (WidgetManager)
 	{
-		WidgetManager->ShowChatWindow();
+		WidgetManager->OpenWidget<class UChatWindow>(WidgetName::CHAT_WINDOW, EWidgetDepth::OVERLAY);
 	}
 }
 

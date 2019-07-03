@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Public/UI/MultiRPGWidgetBase.h"
-#include "Blueprint/UserWidget.h"
 #include "ChatWindow.generated.h"
 
 class UScrollBox;
@@ -31,7 +30,7 @@ public:
 	UEditableTextBox* ChatEntry;
 
 public:
-	void Setup(APlayerController * PlayerController) override;
+	virtual void Setup(APlayerController * PlayerController) override;
 
 	/* 텍스트 커밋될 때 호출 됨
 	 *

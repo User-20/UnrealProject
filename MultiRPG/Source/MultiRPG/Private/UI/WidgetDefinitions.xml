@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Root>
+	<Widget Name="ChatWindow" Path="/Game/UMG/Chat/WidgetBP_ChatWindow.WidgetBP_ChatWindow_C"></Widget>
+	<Widget Name="Crosshair" Path="/Game/UMG/HUD/WidgetBP_Crosshair.WidgetBP_Crosshair_C"></Widget>
+</Root>

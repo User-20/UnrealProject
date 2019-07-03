@@ -91,6 +91,5 @@ void UChatWindow::ToggleTextBoxKeyboardFocus()
 	if (!ChatEntry->HasKeyboardFocus())
 	{
 		ChatEntry->SetKeyboardFocus();
-		UE_LOG(LogClass, Log, TEXT("@@@@@ SetKeyboardFocus"));
 	}
 }

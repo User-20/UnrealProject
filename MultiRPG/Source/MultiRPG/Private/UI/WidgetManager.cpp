@@ -4,11 +4,13 @@
 #include "WidgetManager.h"
 #include "Public/UI/ChatWindow.h"
 #include "Public/Player/MultiRPGPlayerController.h"
+#include "Runtime/XmlParser/Public/XmlFile.h"
+#include "Runtime/Core/Public/Misc/Paths.h"
 
 AWidgetManager::AWidgetManager(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-
+	
 }
 
 void AWidgetManager::PostInitializeComponents()
@@ -16,69 +18,59 @@ void AWidgetManager::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	PlayerOwner = Cast<AMultiRPGPlayerController>(GetOwner());
-}
 
-void AWidgetManager::SetChatVisibilty(const ESlateVisibility RequiredVisibility)
-{
-	if (ChatWindow->GetVisibility() != RequiredVisibility)
+	// WidgetDefinitions.xml 의 경로
+	FString filePath = (TEXT("Source/MultiRPG/Private/UI/WidgetDefinitions.xml"));
+	// Project가 존재하는 경로를 절대 경로로 바꾼다
+	FString FullPath = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir());
+	FullPath += filePath;
+
+	// WidgetDefinitions.xml 파일을 Load함
+	FXmlFile Difinitions(FullPath);
+
+	const FXmlNode* node = Difinitions.GetRootNode();
+	// Root Node의 자식들을 가져온다
+	TArray<FXmlNode*> child = node->GetChildrenNodes();
+	int childLength = child.Num();
+
+	for (int i = 0; i < childLength; i++)
 	{
-		ChatWindow->SetVisibility(RequiredVisibility);
+		// 속성값을 Key로 가져온다
+		FString WidgetName = child[i]->GetAttribute(TEXT("Name"));
+		FString WidgetPath = child[i]->GetAttribute(TEXT("Path"));
+		
+		if (!WidgetName.IsEmpty() && !WidgetPath.IsEmpty())
+		{
+			WidgetDefinitions.Emplace(WidgetName, WidgetPath);
+		}
 	}
-}
-
-void AWidgetManager::ShowChatWindow()
-{
-	TryCreateChatWidget();
-
-	if (ChatWindow)
-	{
-		ChatWindow->SetVisibility(ESlateVisibility::Visible);
-	}	
+	
 }
 
 void AWidgetManager::AddChatLine(const FText& ChatString)
 {
-	TryCreateChatWidget();
-
-	if (ChatWindow)
+	if (IsValidWidget(WidgetName::CHAT_WINDOW))
 	{
+		UChatWindow* ChatWindow = Cast<UChatWindow>(HUDLoadedMap[WidgetName::CHAT_WINDOW]);
 		ChatWindow->AddChatLine(ChatString);
 	}
 }
 
 void AWidgetManager::ToggleChatWindow()
 {
-	TryCreateChatWidget();
-
-	if (ChatWindow)
+	if (IsValidWidget(WidgetName::CHAT_WINDOW))
 	{
+		UChatWindow* ChatWindow = Cast<UChatWindow>(HUDLoadedMap[WidgetName::CHAT_WINDOW]);
 		ChatWindow->ToggleTextBoxKeyboardFocus();
 	}
 }
 
-bool AWidgetManager::TryCreateChatWidget()
+bool AWidgetManager::IsValidWidget(const FString& WidgetName)
 {
-	bool bIsCreated = false;
-	AMultiRPGPlayerController* PC = Cast<AMultiRPGPlayerController>(PlayerOwner);
-	if (PC)
+	if (HUDLoadedMap.Find(WidgetName))
 	{
-		if (!ChatWindow)
-		{
-			bIsCreated = true;
-			FStringClassReference WidgetClassRef(TEXT("/Game/UMG/Chat/WidgetBP_ChatWindow.WidgetBP_ChatWindow_C"));
-			UClass * WidgetClass = WidgetClassRef.TryLoadClass <UChatWindow>();
-
-			if (WidgetClass)
-			{
-				ChatWindow = CreateWidget<UChatWindow>(GetWorld(), WidgetClass);
-				if (ChatWindow)
-				{
-					ChatWindow->Setup(PC);
-				}
-			}
-		}
+		return true;
 	}
 
-	return bIsCreated;
+	return false;
 }
-
