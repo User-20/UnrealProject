@@ -6,7 +6,6 @@
 #include "Components/ScrollBox.h"
 #include "Runtime/UMG/Public/Components/TextBlock.h"
 #include "Runtime/Slate/Public/Framework/Application/SlateApplication.h"
-#include "..\..\Public\UI\ChatWindow.h"
 
 UChatWindow::UChatWindow(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)

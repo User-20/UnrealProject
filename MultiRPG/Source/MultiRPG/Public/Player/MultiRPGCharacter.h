@@ -84,9 +84,35 @@ protected:
 	/* 무기 발사 Input 함수 */
 	void Fire();
 
+	/* 총쏘는 애니메이션 서버에서 실행 (멀티캐스트를 사용하기 위함) */
+	UFUNCTION(Unreliable, Server, WithValidation)
+	void ServerRPC_FireAnimation();
+	virtual void ServerRPC_FireAnimation_Implementation();
+	virtual bool ServerRPC_FireAnimation_Validate();
+
+	/* 총쏘는 애니메이션 멀티캐스트(다른 클라이언트에서 실행) */
+	UFUNCTION(Unreliable, NetMulticast, WithValidation)
+	void MulticastRPC_FireAnimation();
+	virtual void MulticastRPC_FireAnimation_Implementation();
+	virtual bool MulticastRPC_FireAnimation_Validate();
+
 	/* 플레이어 공격 애니메이션 몽타주에서 호출됨 */
 	UFUNCTION(BlueprintCallable, Category = "Attack", meta = (AllowProtectedAccess = "true"))
 	void OnShoot();
+
+	/* LineTrace이후 피격 지점을 서버에 알려줌
+	 *
+	 * @Param		SpawnLocation		피격된 위치
+	 */
+	UFUNCTION(Unreliable, Server, WithValidation)
+	void SeverRPC_ShowAttackEffect(const FString& ParticlePath, const FVector& SpawnLocation);
+	void SeverRPC_ShowAttackEffect_Implementation(const FString& ParticlePath, const FVector& SpawnLocation);
+	bool SeverRPC_ShowAttackEffect_Validate(const FString& ParticlePath, const FVector& SpawnLocation);
+
+	UFUNCTION(Unreliable, NetMulticast, WithValidation)
+	void MulticastRPC_ShowAttackEffect(const FString& ParticlePath, const FVector& SpawnLocation);
+	virtual void MulticastRPC_ShowAttackEffect_Implementation(const FString& ParticlePath, const FVector& SpawnLocation);
+	virtual bool MulticastRPC_ShowAttackEffect_Validate(const FString& ParticlePath, const FVector& SpawnLocation);
 
 	/** 이동 애니메이션에 사용 하는 (fMoveFoward, fMoveRight) 를 서버에서 실행 시킴 (서버에서 실행 시킬 몸체)
 	 * 

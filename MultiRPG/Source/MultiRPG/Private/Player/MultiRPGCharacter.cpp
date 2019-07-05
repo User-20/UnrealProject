@@ -227,69 +227,146 @@ void AMultiRPGCharacter::Fire()
 	if (bIsRifleEquipped)
 	{
 		GetMesh()->GetAnimInstance()->Montage_Play(FireAnim);
+
+		// 서버에게 Fire 애니메이션을 play 했다고 알려줌
+		ServerRPC_FireAnimation();
 	}
 	
 }
 
+void AMultiRPGCharacter::ServerRPC_FireAnimation_Implementation()
+{
+	// 자신이 Fire 애니메이션을 Play 했다고 모든 클라이언트들 에게 알려줌
+	MulticastRPC_FireAnimation();
+}
+
+bool AMultiRPGCharacter::ServerRPC_FireAnimation_Validate()
+{
+	return true;
+}
+
+void AMultiRPGCharacter::MulticastRPC_FireAnimation_Implementation()
+{
+	if (!HasAuthority())
+	{
+		// 리모트 플레이어 들에게 애니메이션을 Play 시키라고 알려줌
+		if (Controller != GetWorld()->GetFirstPlayerController())
+		{
+			GetMesh()->GetAnimInstance()->Montage_Play(FireAnim);
+		}
+	}
+}
+
+bool AMultiRPGCharacter::MulticastRPC_FireAnimation_Validate()
+{
+	return true;
+}
+
 void AMultiRPGCharacter::OnShoot()
 {
-	UMultiRPGGameInstance* GameInstance = Cast<UMultiRPGGameInstance>(GetGameInstance());
-	if (GameInstance)
+	if (!HasAuthority())
 	{
-		ParticleManager* _ParticleManager = GameInstance->GetParticleManager();
-		if (_ParticleManager)
+		UMultiRPGGameInstance* GameInstance = Cast<UMultiRPGGameInstance>(GetGameInstance());
+		if (GameInstance)
 		{
-			// 총 쏠때 나오는 불꽃 파티클을 총구에 붙히고 Play 시킴
-			const FString ShootParticlePath = TEXT("WeaponEffects/P_AssaultRifle_MF");
-			const FName SocketName = TEXT("Muzzle");
-
-			_ParticleManager->PlayParticle(ShootParticlePath, WeaponRight, SocketName, EAttachLocation::SnapToTarget);
-
-			// 총 쏘는 사운드를 Play 함
-			SoundManager* _SoundManager = GameInstance->GetSoundManager();
-			if (_SoundManager)
+			ParticleManager* _ParticleManager = GameInstance->GetParticleManager();
+			if (_ParticleManager)
 			{
-				const FString SoundName = TEXT("rifle_sound");
-				_SoundManager->PlaySound(GetWorld(), SoundName, GetActorLocation());
-			}
+				// 총 쏠때 나오는 불꽃 파티클을 총구에 붙히고 Play 시킴
+				const FString ShootParticlePath = TEXT("WeaponEffects/P_AssaultRifle_MF");
+				const FName SocketName = TEXT("Muzzle");
 
-			// 총 쏘는 방향으로 LineTrace
-			// SprintArm의 위치를 Start지점으로 함
-			const FVector Start = CameraBoom->GetComponentLocation();
+				_ParticleManager->PlayParticle(ShootParticlePath, WeaponRight, SocketName, EAttachLocation::SnapToTarget);
 
-			// 카메라가 바라보는 방향으로 Bullet이 날아갈 거리(10000.0f)를 곱한 값이 End 지점
-			const float BulletDistance = 10000.0f;
-			const FVector End = Start + (FollowCamera->GetForwardVector() * BulletDistance);
+				// 총 쏘는 사운드를 Play 함
+				SoundManager* _SoundManager = GameInstance->GetSoundManager();
+				if (_SoundManager)
+				{
+					const FString SoundName = TEXT("rifle_sound");
+					_SoundManager->PlaySound(GetWorld(), SoundName, GetActorLocation());
+				}
 
-			FHitResult HitData(ForceInit);
-			// TraceComplex 옵션을 키고, 나 자신은 LineTrace충돌에서 무시함
-			FCollisionQueryParams TraceParameters(FName(TEXT("")), true, GetOwner());
-			// 충돌을 체크 해야할 Object Type
-			FCollisionObjectQueryParams CollisionParams;
-			CollisionParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
-			CollisionParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
-			CollisionParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
-			CollisionParams.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
-			CollisionParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Vehicle);
-			CollisionParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Destructible);
+				// 총을 쏜 자신의 클라이언트만 실행
+				if (Controller == GetWorld()->GetFirstPlayerController())
+				{
+					// 총 쏘는 방향으로 LineTrace
+					// SprintArm의 위치를 Start지점으로 함
+					const FVector Start = CameraBoom->GetComponentLocation();
 
-			GetWorld()->LineTraceSingleByObjectType(HitData, Start, End, CollisionParams, TraceParameters);
-			//DrawDebugLine(GetWorld(), Start, End, FColor::Green, true);
+					// 카메라가 바라보는 방향으로 Bullet이 날아갈 거리(10000.0f)를 곱한 값이 End 지점
+					const float BulletDistance = 10000.0f;
+					const FVector End = Start + (FollowCamera->GetForwardVector() * BulletDistance);
 
-			// LineTrace에 충돌된 물체가 있다면
-			AActor* ActorHit = HitData.GetActor();
-			if (ActorHit)
-			{
-				// 파티클 (연기 이펙트)가 벽에 파뭍혀서 보이지 않는 현상이 있어
-				// 충돌된 물체의 Normal 방향으로 20.0f 정도 떨어진 Offset값을 줌
-				const FVector Offset = HitData.Normal * 20.0f;
-				const FVector ImpactPoint = HitData.ImpactPoint + Offset;
-				// 충돌된 위치에 파티클을 Play 함
-				const FString HitParticlePath = TEXT("WeaponEffects/P_AssaultRifle_IH");
-				_ParticleManager->PlayParticle(GetWorld(), HitParticlePath, ImpactPoint);
+					FHitResult HitData(ForceInit);
+					// TraceComplex 옵션을 키고, 나 자신은 LineTrace충돌에서 무시함
+					FCollisionQueryParams TraceParameters(FName(TEXT("")), true, GetOwner());
+					// 충돌을 체크 해야할 Object Type
+					FCollisionObjectQueryParams CollisionParams;
+					CollisionParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+					CollisionParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+					CollisionParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+					CollisionParams.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
+					CollisionParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Vehicle);
+					CollisionParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Destructible);
+
+					GetWorld()->LineTraceSingleByObjectType(HitData, Start, End, CollisionParams, TraceParameters);
+					//DrawDebugLine(GetWorld(), Start, End, FColor::Green, true);
+
+					// LineTrace에 충돌된 물체가 있다면
+					AActor* ActorHit = HitData.GetActor();
+					if (ActorHit)
+					{
+						// 파티클 (연기 이펙트)가 벽에 파뭍혀서 보이지 않는 현상이 있어
+						// 충돌된 물체의 Normal 방향으로 20.0f 정도 떨어진 Offset값을 줌
+						const FVector Offset = HitData.Normal * 20.0f;
+						const FVector ImpactPoint = HitData.ImpactPoint + Offset;
+						// 충돌된 위치에 파티클을 Play 함
+						const FString HitParticlePath = TEXT("WeaponEffects/P_AssaultRifle_IH");
+						_ParticleManager->PlayParticle(GetWorld(), HitParticlePath, ImpactPoint);
+
+						// 피격된 위치를 서버에 알려줌
+						SeverRPC_ShowAttackEffect(HitParticlePath, ImpactPoint);
+					}
+				}
 			}
 		}
 	}
+}
+
+void AMultiRPGCharacter::SeverRPC_ShowAttackEffect_Implementation(const FString& ParticlePath, const FVector & SpawnLocation)
+{
+	MulticastRPC_ShowAttackEffect(ParticlePath, SpawnLocation);
+}
+
+bool AMultiRPGCharacter::SeverRPC_ShowAttackEffect_Validate(const FString& ParticlePath, const FVector & SpawnLocation)
+{
+	return true;
+}
+
+void AMultiRPGCharacter::MulticastRPC_ShowAttackEffect_Implementation(const FString& ParticlePath, const FVector& SpawnLocation)
+{
+	if (!HasAuthority())
+	{
+		// 리모트 플레이어라면
+		if (Controller != GetWorld()->GetFirstPlayerController())
+		{
+			UMultiRPGGameInstance* GameInstance = Cast<UMultiRPGGameInstance>(GetGameInstance());
+			if (GameInstance)
+			{
+				ParticleManager* _ParticleManager = GameInstance->GetParticleManager();
+				if (_ParticleManager)
+				{
+					// 파티클을 실행 시킨다
+					_ParticleManager->PlayParticle(GetWorld(), ParticlePath, SpawnLocation);
+				}
+			}
+		}
+	}
+}
+
+bool AMultiRPGCharacter::MulticastRPC_ShowAttackEffect_Validate(const FString& ParticlePath, const FVector& SpawnLocation)
+{
+	return true;
 }
 
 void AMultiRPGCharacter::TurnAtRate(float Rate)
